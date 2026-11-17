@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ r.title }} — {{ site.title }}{% endblock %}
+{% block description %}{{ r.description or site.description }}{% endblock %}
+{% block body_class %}page-doc{% endblock %}
+{% block body %}
+<header class="top doc-top">
+  <div class="top-row">
+    <a class="brand" href="{{ root }}" aria-label="{{ site.title }}: на карту">
+      <img src="{{ root }}assets/icon.svg" alt="" width="28" height="28">
+      <span class="brand-title">{{ site.title }}</span>
+    </a>
+    <a class="back" href="{{ root }}#route/{{ r.id }}">Показать на карте →</a>
+  </div>
+</header>
+<main id="main" class="doc">
+  <article class="card route-card">
+    <p class="card-kicker">Готовый путь · {{ r.steps|length }} тем</p>
+    <h1 class="card-title">{{ r.title }}</h1>
+    {% if r.description %}<p class="card-summary">{{ r.description }}</p>{% endif %}
+    <ol class="steps">
+      {% for s in r.steps %}
+      <li class="step" data-id="{{ s.id }}" style="--c: {{ s.color }}">
+        <a class="step-title" href="{{ root }}topic/{{ s.id }}/">{{ s.title }}</a>
+        <span class="step-meta">{{ s.level_icon }} {{ s.section_title }}{% if s.time %} · {{ s.time }}{% endif %}</span>
+        {% if s.summary %}<p class="step-sum">{{ s.summary }}</p>{% endif %}
+        {% if s.start %}<p class="step-start">С чего начать: <a href="{{ s.start.url }}" target="_blank" rel="noopener noreferrer">{{ s.start.title }}</a>{% if s.start.author %} — {{ s.start.author }}{% endif %}</p>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </article>
+</main>
+{% endblock %}

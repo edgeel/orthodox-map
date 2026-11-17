@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block body_class %}page-map{% endblock %}
+{% block body %}
+<header class="top" id="top">
+  <div class="top-row">
+    <a class="brand" href="./" aria-label="{{ site.title }}: на главную">
+      <img src="{% if single %}{{ icon_uri }}{% else %}assets/icon.svg{% endif %}" alt="" width="28" height="28">
+      <span class="brand-title">{{ site.title }}</span>
+    </a>
+    <div class="search">
+      <label class="visually-hidden" for="q">Поиск по темам, авторам и тегам</label>
+      <input id="q" type="search" placeholder="Поиск: тема, автор, тег" autocomplete="off" spellcheck="false">
+      <span class="search-count" id="q-count" aria-live="polite"></span>
+    </div>
+    <button type="button" class="filters-btn" id="filters-btn" aria-expanded="false" aria-controls="filters" aria-label="Фильтры и пути" title="Фильтры и пути">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/></svg><span class="filters-dot"></span>
+    </button>
+    <div class="seg" role="group" aria-label="Вид">
+      <button type="button" class="seg-btn" data-view="map" aria-pressed="true" aria-label="Карта"><span class="seg-ic" aria-hidden="true">🗺</span><span class="seg-text">Карта</span></button>
+      <button type="button" class="seg-btn" data-view="list" aria-pressed="false" aria-label="Список"><span class="seg-ic" aria-hidden="true">☰</span><span class="seg-text">Список</span></button>
+    </div>
+    <details class="menu">
+      <summary aria-label="Настройки и прогресс">⋯</summary>
+      <div class="menu-body">
+        <button type="button" id="theme-btn">Тема: <span id="theme-name">как в системе</span></button>
+        <button type="button" id="export-btn">Сохранить прогресс (JSON)</button>
+        <label class="file-btn">Загрузить прогресс…<input type="file" id="import-file" accept="application/json,.json"></label>
+        <button type="button" id="reset-btn">Сбросить отметки</button>
+        {% if not single %}<a class="menu-link" href="orthodox-map.html" download>Скачать карту одним файлом</a>{% endif %}
+        <p class="menu-note">Отметки «хочу изучить / читаю / изучил» хранятся только в этом браузере.{% if single and site.base_url %} Это офлайн-копия; сайт: <a href="{{ site.base_url }}" target="_blank" rel="noopener noreferrer">{{ site.base_url }}</a>{% endif %}</p>
+      </div>
+    </details>
+  </div>
+  <div class="top-row filters" id="filters">
+    <div class="chips" role="group" aria-label="Уровень">
+      {% for l in levels %}<button type="button" class="chip" data-level="{{ l.level }}" aria-pressed="true" title="{{ l.label }}">{{ l.icon }} <span class="chip-text">{{ l.short }}</span></button>{% endfor %}
+    </div>
+    <label class="select">
+      <span class="visually-hidden">Тип материала</span>
+      <select id="type">
+        <option value="">Все материалы</option>
+        {% for t in types %}<option value="{{ t.key }}">{{ t.icon }} {{ t.label }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="select">
+      <span class="visually-hidden">Мои отметки</span>
+      <select id="mine">
+        <option value="">Все темы</option>
+        <option value="want">🔖 Хочу изучить</option>
+        <option value="reading">📖 Читаю</option>
+        <option value="done">✓ Изучил</option>
+        <option value="none">Без отметок</option>
+      </select>
+    </label>
+    {% if routes %}
+    <div class="routes" role="group" aria-label="Готовые пути">
+      <span class="routes-label">Пути:</span>
+      {% for r in routes %}<button type="button" class="chip route-chip" data-route="{{ r.id }}" aria-pressed="false" title="{{ r.description }}">{{ r.title }}</button>{% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</header>
+
+<main id="main">
+  <div class="mapwrap" id="mapwrap">
+    <svg id="map" class="map" viewBox="0 0 {{ layout.width }} {{ layout.height }}" width="{{ layout.width }}" height="{{ layout.height }}"
+         role="group" aria-label="Карта тем: разделы слева направо, уровни снизу вверх" data-w="{{ layout.width }}" data-h="{{ layout.height }}">
+      <g id="vp">
+        <g class="bands">
+        {% for b in layout.bands %}
+          <rect class="band band-{{ b.level }}" x="0" y="{{ b.y }}" width="{{ layout.width }}" height="{{ b.h }}"/>
+          <text class="band-label" x="{{ 22 }}" y="{{ b.y + b.h / 2 }}" text-anchor="middle" dominant-baseline="middle">{{ b.icon }}</text>
+          <text class="band-num" x="{{ 22 }}" y="{{ b.y + b.h / 2 + 22 }}" text-anchor="middle">{{ b.level }}</text>
+        {% endfor %}
+        </g>
+        <g class="roots" aria-hidden="true">
+        {% for d in layout.roots %}<path d="{{ d }}"/>{% endfor %}
+          <ellipse class="trunk" cx="{{ layout.trunk[0] }}" cy="{{ layout.trunk[1] }}" rx="46" ry="7"/>
+          <text class="roots-label" x="{{ layout.trunk[0] }}" y="{{ layout.trunk[1] + 26 }}" text-anchor="middle">{{ site.roots_label }}</text>
+        </g>
+        {% for col in columns %}
+        <g class="col" data-section="{{ col.id }}" style="--c: {{ col.color }}">
+          <rect class="col-bg" x="{{ col.x }}" y="{{ layout.header_y }}" width="{{ col.w }}" height="{{ col_h }}" rx="18"/>
+          <text class="col-title" x="{{ col.x + 16 }}" y="{{ layout.header_y + 26 }}">{% for line in col.lines %}<tspan x="{{ col.x + 16 }}" dy="{{ 0 if loop.first else 19 }}">{% if loop.first and col.icon %}{{ col.icon }} {% endif %}{{ line }}</tspan>{% endfor %}</text>
+          <rect class="col-prog-bg" x="{{ col.x + 16 }}" y="{{ layout.header_y + 62 }}" width="{{ col.w - 70 }}" height="4" rx="2"/>
+          <rect class="col-prog" x="{{ col.x + 16 }}" y="{{ layout.header_y + 62 }}" width="0" height="4" rx="2" data-full="{{ col.w - 70 }}"/>
+          <text class="col-count" x="{{ col.x + col.w - 16 }}" y="{{ layout.header_y + 67 }}" text-anchor="end">0/{{ col.count }}</text>
+        </g>
+        {% endfor %}
+        <g class="edges">
+        {% for e in layout.edges %}<path class="edge" d="{{ e.d }}" data-from="{{ e.from }}" data-to="{{ e.to }}"/>{% endfor %}
+        </g>
+        <g class="route-layer" id="route-layer"></g>
+        <g class="nodes">
+        {% for n in nodes %}
+          <a class="node lvl-{{ n.level }}" href="topic/{{ n.id }}/" data-id="{{ n.id }}" data-section="{{ n.section }}" style="--c: {{ n.color }}"
+             aria-label="{{ n.title }}. {{ n.level_label }}. {{ n.section_title }}">
+            <rect class="node-bg" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="12"/>
+            <rect class="node-bar" x="{{ n.x }}" y="{{ n.y }}" width="6" height="{{ n.h }}" rx="3"/>
+            <text class="node-title" x="{{ n.x + 16 }}" y="{{ n.y + (32 if n.lines|length == 1 else 24) }}">{% for line in n.lines %}<tspan x="{{ n.x + 16 }}" dy="{{ 0 if loop.first else 17 }}">{{ line }}</tspan>{% endfor %}</text>
+            <text class="node-meta" x="{{ n.x + 16 }}" y="{{ n.y + n.h - 11 }}">{{ n.level_icon }} {{ n.meta }}</text>
+            <circle class="node-st" cx="{{ n.x + n.w - 14 }}" cy="{{ n.y + 14 }}" r="6"/>
+            <text class="node-num" x="{{ n.x + n.w - 14 }}" y="{{ n.y + 14 }}" text-anchor="middle" dominant-baseline="central"></text>
+          </a>
+        {% endfor %}
+        </g>
+      </g>
+    </svg>
+    <div class="zoom" role="group" aria-label="Масштаб">
+      <button type="button" id="zoom-in" aria-label="Приблизить">+</button>
+      <button type="button" id="zoom-out" aria-label="Отдалить">−</button>
+      <button type="button" id="zoom-fit" aria-label="Показать всю карту">⤢</button>
+    </div>
+    <div class="hint" id="hint">
+      <p><b>Как читать карту.</b> Внизу — корни и 🌱 начальные темы, выше 🌿 средние и 🌳 углублённые. Стрелки ведут от того, что стоит пройти раньше. Нажмите на тему — откроется карточка с материалами. Не знаете, с чего начать? Выберите путь вверху (на телефоне — за кнопкой фильтров рядом с поиском).</p>
+      <button type="button" id="hint-close" aria-label="Скрыть подсказку">✕</button>
+    </div>
+  </div>
+
+  <div class="list" id="list">
+    <h1 class="list-h1">{{ site.title }}</h1>
+    <p class="list-lead">{{ site.description }}</p>
+    {% for s in sections %}
+    <section class="list-sec" id="s-{{ s.id }}" data-section="{{ s.id }}" style="--c: {{ s.color }}">
+      <h2><span class="sec-icon">{{ s.icon }}</span> {{ s.title }} <span class="sec-prog" data-section="{{ s.id }}">0/{{ s.topics|length }}</span></h2>
+      {% if s.description %}<p class="sec-desc">{{ s.description }}</p>{% endif %}
+      {% if s.topics %}
+      <ol class="li-list">
+        {% for t in s.topics %}
+        <li class="li lvl-{{ t.level }}" data-id="{{ t.id }}">
+          <div class="li-head">
+            <span class="li-lvl" title="{{ t.level_label }}">{{ t.level_icon }}</span>
+            <a href="topic/{{ t.id }}/" data-topic="{{ t.id }}" class="li-title">{{ t.title }}</a>
+            <span class="li-st" aria-hidden="true"></span>
+            {% if t.time %}<span class="li-time">{{ t.time }}</span>{% endif %}
+          </div>
+          {% if t.summary %}<p class="li-sum">{{ t.summary }}</p>{% endif %}
+          <ul class="li-more">
+            {% for m in t.materials %}<li>{{ m.icon }} {% if m.author %}{{ m.author }}. {% endif %}«{{ m.title }}»{% if m.time %}, {{ m.time }}{% endif %}{% if m.start %} — с чего начать{% endif %}<br><span class="url">{{ m.url }}</span></li>{% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="sec-empty">Темы этого раздела скоро появятся.</p>
+      {% endif %}
+    </section>
+    {% endfor %}
+    {% if routes %}
+    <section class="list-routes">
+      <h2>Готовые пути</h2>
+      <ul>{% for r in routes %}<li><a href="route/{{ r.id }}/">{{ r.title }}</a>{% if r.description %} — {{ r.description }}{% endif %}</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+  </div>
+
+  <aside class="panel" id="panel" aria-labelledby="panel-title" hidden tabindex="-1">
+    <div class="sheet-grip" id="sheet-grip" aria-hidden="true"></div>
+    <button type="button" class="panel-close" id="panel-close" aria-label="Закрыть карточку">✕</button>
+    <div id="panel-body"></div>
+  </aside>
+</main>
+<noscript><p class="noscript">{% if single %}Без JavaScript карта и карточки тем не работают; включите JavaScript или откройте сайт{% if site.base_url %} {{ site.base_url }}{% endif %}.{% else %}Без JavaScript карта не двигается, но каждая тема открывается по ссылке, а полный список тем — ниже карты.{% endif %}</p></noscript>
+{% endblock %}

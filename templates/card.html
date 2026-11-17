@@ -1,0 +1,39 @@
+<article class="card" data-id="{{ t.id }}" style="--c: {{ t.color }}">
+  <p class="card-kicker"><span class="kicker-sec">{{ t.section_icon }} {{ t.section_title }}</span> <span class="kicker-lvl lvl-{{ t.level }}">{{ t.level_icon }} {{ t.level_label }}</span></p>
+  <{{ heading }} class="card-title" id="panel-title">{{ t.title }}</{{ heading }}>
+  {% if t.summary %}<p class="card-summary">{{ t.summary }}</p>{% endif %}
+  <p class="card-meta">
+    {% if t.time %}<span title="Сколько времени займёт">⏱ {{ t.time }}</span>{% endif %}
+    {% for tag in t.tags %}<span class="tag">#{{ tag }}</span>{% endfor %}
+  </p>
+  <div class="status" role="group" aria-label="Мой прогресс по теме" data-id="{{ t.id }}">
+    <button type="button" data-st="want" aria-pressed="false">🔖 Хочу изучить</button>
+    <button type="button" data-st="reading" aria-pressed="false">📖 Читаю</button>
+    <button type="button" data-st="done" aria-pressed="false">✓ Изучил</button>
+  </div>
+  {% if t.needs %}
+  <p class="card-needs"><b>Сначала стоит пройти:</b> {% for n in t.needs %}<a class="tlink" href="{{ root }}topic/{{ n.id }}/" data-topic="{{ n.id }}">{{ n.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+  <h3 class="card-h">Материалы</h3>
+  <ul class="mats">
+    {% for m in t.materials %}
+    <li class="mat type-{{ m.type }}{% if m.start %} is-start{% endif %}" data-type="{{ m.type }}">
+      <span class="mat-icon" title="{{ m.type_label }}" aria-hidden="true">{{ m.icon }}</span>
+      <div class="mat-main">
+        {% if m.start %}<span class="badge">С чего начать</span>{% endif %}
+        <a class="mat-title" href="{{ m.url }}" target="_blank" rel="noopener noreferrer">{{ m.title }}</a>{% if m.lang == "en" %} <span class="mat-lang" title="На английском">EN</span>{% endif %}
+        <div class="mat-meta">{% if m.author %}{{ m.author }} · {% endif %}{{ m.type_label }}{% if m.time %} · {{ m.time }}{% endif %}{% if m.alt_url %} · <a href="{{ m.alt_url }}" target="_blank" rel="noopener noreferrer">другая ссылка</a>{% endif %}</div>
+        {% if m.note %}<div class="mat-note">{{ m.note }}</div>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if t.body_html %}<div class="card-body">{{ t.body_html|safe }}</div>{% endif %}
+  {% if t.opens %}
+  <p class="card-opens"><b>На этом строится:</b> {% for n in t.opens %}<a class="tlink" href="{{ root }}topic/{{ n.id }}/" data-topic="{{ n.id }}">{{ n.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+  {% if t.routes %}
+  <p class="card-routes"><b>Входит в пути:</b> {% for r in t.routes %}<a href="{{ root }}route/{{ r.id }}/" data-route="{{ r.id }}">{{ r.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+  <p class="card-links"><a href="{{ permalink_base or root }}topic/{{ t.id }}/" class="card-permalink" data-share="{{ t.id }}">🔗 Ссылка на тему</a> <a href="{{ root }}#topic/{{ t.id }}" class="card-onmap">🗺 На карте</a></p>
+</article>

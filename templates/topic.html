@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ t.title }} — {{ site.title }}{% endblock %}
+{% block description %}{{ t.summary or site.description }}{% endblock %}
+{% block body_class %}page-doc{% endblock %}
+{% block body %}
+<header class="top doc-top">
+  <div class="top-row">
+    <a class="brand" href="{{ root }}" aria-label="{{ site.title }}: на карту">
+      <img src="{{ root }}assets/icon.svg" alt="" width="28" height="28">
+      <span class="brand-title">{{ site.title }}</span>
+    </a>
+    <a class="back" href="{{ root }}#topic/{{ t.id }}">← На карту</a>
+  </div>
+</header>
+<main id="main" class="doc">
+  {% set heading = "h1" %}
+  {% include "card.html" %}
+</main>
+{% endblock %}

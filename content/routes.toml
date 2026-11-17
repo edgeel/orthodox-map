@@ -1,0 +1,49 @@
+# Готовые маршруты по карте. topics — id тем по порядку прохождения.
+
+[[route]]
+id = "znakomstvo"
+title = "Хочу просто познакомиться"
+description = "Семь коротких тем, чтобы понять, что такое православие: Евангелие, Символ веры, молитва, храм, икона и сам духовный путь. Каждая начинается с ролика на 10–30 минут."
+topics = ["o-chem-pravoslavie", "evangelie-pervoe-chtenie", "simvol-very", "molitva-nachalo", "hram-pervye-shagi", "ikona-vvedenie", "dukhovnyy-put-obzor"]
+
+[[route]]
+id = "kreschenie"
+title = "Готовлюсь к крещению / начинаю ходить в храм"
+description = "Всё, что нужно знать перед крещением или в первые месяцы церковной жизни: во что мы верим, как молиться, как устроена служба, как готовиться к исповеди и Причастию, как жить в приходе."
+topics = ["o-chem-pravoslavie", "evangelie-pervoe-chtenie", "simvol-very", "molitva-nachalo", "hram-pervye-shagi", "zapovedi", "tainstva-obzor", "molitvennoe-pravilo", "bogosluzhenie-vvedenie", "liturgiya", "ispoved", "prichastie", "post", "godovoy-krug", "prihodskaya-zhizn"]
+
+[[route]]
+id = "osnovaniya"
+title = "Ищу основания веры"
+description = "Для тех, кто хочет не просто верить, а понимать почему: аргументы о бытии Бога (от космоса и от человека), историчность Христа и Воскресения, вера и наука, трудные вопросы — и как обосновывали веру святые отцы."
+topics = ["o-chem-pravoslavie", "apol-zachem", "bytie-boga", "istorichnost-iisusa", "voskresenie", "nravstvennost-razum-soznanie", "problema-zla", "vera-i-nauka", "kosmologiya-tonkaya-nastroyka", "otvety-na-vozrazheniya", "bibliya-i-arheologiya", "tvorenie-i-evolyuciya", "pochemu-cerkov", "epistemologiya-otcov", "pravoslavnaya-apologetika-segodnya"]
+
+[[route]]
+id = "sterzhen"
+title = "Стержень: Евангелие → катехизис → святые отцы"
+description = "Путь, которым прошёл автор карты: читать Евангелие с толкованием, разобраться в катехизисе, потом взяться за книги святых отцов. Параллельно — беседы на YouTube."
+topics = ["evangelie-pervoe-chtenie", "tolkovanie-evangeliya", "simvol-very", "katehizis", "kto-takie-otcy", "zlatoust", "dukhovnyy-put-obzor", "avva-dorofey", "strasti", "lestvica", "afanasiy", "kappadokiycy"]
+
+[[route]]
+id = "ottsy"
+title = "Хочу читать святых отцов"
+description = "Святые отцы по порядку и по силам: от живых бесед Златоуста и патериков к апостольским мужам, каппадокийцам, преп. Максиму и свт. Григорию Паламе."
+topics = ["kto-takie-otcy", "zlatoust", "pustynniki", "avva-dorofey", "apostolskie-muzhi", "apologety-ii-veka", "afanasiy", "kappadokiycy", "ioann-damaskin", "strasti", "lestvica", "maksim-ispovednik", "simeon-palama"]
+
+[[route]]
+id = "bibliya"
+title = "Хочу понимать Библию"
+description = "Как подступиться к Библии, увидеть её целиком и читать по книгам вместе с толкованиями святых отцов: от Евангелия до Апокалипсиса."
+topics = ["kak-chitat-bibliyu", "evangelie-pervoe-chtenie", "bibliya-obzor", "tolkovanie-evangeliya", "vethiy-zavet-vvedenie", "bytie-shestodnev", "psaltir", "novyy-zavet-vvedenie", "deyaniya-poslaniya", "proroki", "apokalipsis"]
+
+[[route]]
+id = "bogoslovie"
+title = "Углубиться в богословие"
+description = "Догматика вместе с отцами и Соборами, которые её выразили: от Символа веры к Троице, Христу, обожению, Церкви и мистическому богословию."
+topics = ["simvol-very", "katehizis", "chto-takoe-dogmat", "troica", "drevnyaya-cerkov", "vselenskie-sobory", "afanasiy", "kappadokiycy", "hristologiya", "bog-tvorets", "chelovek-grehopadenie", "spasenie-obozhenie", "ioann-damaskin", "ekkleziologiya", "eskhatologiya", "maksim-ispovednik", "misticheskoe-bogoslovie", "simeon-palama"]
+
+[[route]]
+id = "dukhovnaya-zhizn"
+title = "Хочу жить духовной жизнью"
+description = "Практика, а не теория: молитва, исповедь, пост, борьба со страстями и Иисусова молитва — с живыми беседами монаха Андроника и книгами отцов-подвижников."
+topics = ["molitva-nachalo", "dukhovnyy-put-obzor", "podvizhniki-nashego-vremeni", "molitvennoe-pravilo", "tainstva-obzor", "zapovedi", "ispoved", "pokayanie", "post", "avva-dorofey", "strasti", "russkie-uchiteli", "pomysly-prelest", "iisusova-molitva", "lestvica", "dobrotolyubie"]
